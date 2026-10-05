@@ -1,10 +1,15 @@
 import pygame as pg
 import os
+from screeninfo import get_monitors
+monitorlist = get_monitors()
+primarymonitor = get_monitors()[0]
+monitorwidth = int(str(primarymonitor)[24:28])
+monitorheight = int(str(primarymonitor)[37:41])
 
 
 
 def main():
-    screen = pg.display.set_mode((1850, 1000))
+    screen = pg.display.set_mode((monitorwidth, monitorheight))
     font = pg.font.Font(None, 32)
     clock = pg.time.Clock()
     input_box = pg.Rect(1300, 100, 600, 50)
