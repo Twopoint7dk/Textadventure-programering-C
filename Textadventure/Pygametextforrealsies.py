@@ -1,25 +1,24 @@
 import pygame as pg
 import os
-from screeninfo import get_monitors
-monitorlist = get_monitors()
-primarymonitor = get_monitors()[0]
-monitorwidth = int(str(primarymonitor)[24:28])
-monitorheight = int(str(primarymonitor)[37:41])
-
+def quitgame():
+    pg.quit()
 
 
 def main():
-    screen = pg.display.set_mode((monitorwidth, monitorheight))
+    screen = pg.display.set_mode((300, 500), pg.FULLSCREEN)
     font = pg.font.Font(None, 32)
     clock = pg.time.Clock()
-    input_box = pg.Rect(1300, 100, 600, 50)
+    input_box = pg.Rect(0, 400, 50, 60)
+    display_box = pg.Rect(500, 10, 400, 200)
     color_inactive = pg.Color('lightskyblue3')
     color_active = pg.Color('dodgerblue2')
     color = color_inactive
     active = False
     text = ''
     done = False
+    output = ""
     room = 0
+    playerpos = pg.Vector2(100, 100)
     while not done:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -37,8 +36,26 @@ def main():
                 if active:
                     if event.key == pg.K_RETURN:
                         print(text)
+                        command = text
                         text = ''
                         pg.draw.rect(screen, color, input_box)
+                        if command == "quit" or command == "Quit":
+                            quitgame()
+                        elif command == "test":
+                            output = "testssssssssssssssssssssssssssssssssssssssssss"
+                        elif command[0:2] == "xm":
+                                playerpos = pg.Vector2(int(command[2:6]), playerpos.y) 
+                        elif command[0:2] == "ym":
+                                playerpos = pg.Vector2(playerpos.x, int(command[2:6])) 
+                        elif command == "move":
+                            output = "Which direction?"
+                        pg.draw.rect(screen, pg.Color('magenta'), display_box)
+                        txt_out = font.render(output, True, pg.Color("black"))
+                        screen.blit(txt_out, (display_box.x, display_box.y))
+
+
+                            
+  
                     elif event.key == pg.K_BACKSPACE:
                         text = text[:-1]
                         pg.draw.rect(screen, color, input_box)
@@ -47,22 +64,25 @@ def main():
                     else:
                         text += event.unicode
 
-
-
+        player = pg.image.load(os.path.join(os.path.dirname(__file__), "images", "Player.png"))
+        player = pg.transform.scale_by(player, 0.05)
+        
         bg = pg.image.load(os.path.join("images", "map_25x20.png"))
+        bg = pg.transform.scale_by(bg, 0.4)
         screen.blit(bg, (0,0))
         # Render the current text.
         txt_surface = font.render(text, True, pg.Color("black"))
         width = 550
         input_box.w = width
-
+        
         # Blit the input_box rect.
         pg.draw.rect(screen, color, input_box)
         # Blit the text.
         screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
-
+        screen.blit(player, playerpos)
         pg.display.flip()
         clock.tick(30)
+        
         
 
 if __name__ == '__main__':
